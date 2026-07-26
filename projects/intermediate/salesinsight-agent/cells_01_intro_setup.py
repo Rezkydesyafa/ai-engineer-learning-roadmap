@@ -109,18 +109,59 @@ print("Imports OK. numpy", np.__version__, "| duckdb", duckdb.__version__, "| sq
 """, "det"),
 
     ("md", """
-### 4.1 Konfigurasi model dan harga
+### 4.1 Registry Provider LLM (banyak pilihan gratis)
 
-`temperature=0` memastikan output SQL deterministik. Harga token dipakai hanya untuk **estimasi biaya** di execution trace — sesuaikan dengan provider Anda.
+Notebook ini OpenAI-compatible, jadi provider apa pun yang punya endpoint `/chat/completions` bisa dipakai hanya dengan mengganti `base_url`, `model`, dan API key.
+
+**Provider gratis yang direkomendasikan** (semua mendukung `response_format=json_object` untuk structured output):
+
+| Provider | Model gratis | Env API key |
+|---|---|---|
+| `groq` ⭐ | llama-3.3-70b-versatile | `GROQ_API_KEY` |
+| `cerebras` ⭐ | llama-3.3-70b | `CEREBRAS_API_KEY` |
+| `gemini` | gemini-2.0-flash | `GEMINI_API_KEY` |
+| `openrouter` | llama-3.3-70b-instruct:free | `OPENROUTER_API_KEY` |
+| `mistral` | mistral-small-latest | `MISTRAL_API_KEY` |
+| `github` | gpt-4o-mini | `GITHUB_TOKEN` |
+| `router` | hermes-claude (router pribadi) | `ROUTER_API_KEY` |
+| `custom` | atur sendiri via env | `OPENAI_API_KEY` |
+
+**Cara pakai:** set `SALESINSIGHT_PROVIDER` ke salah satu nama di atas dan isi API key-nya. Contoh Groq (paling cepat & gratis):
+
+```bash
+export SALESINSIGHT_PROVIDER=groq
+export GROQ_API_KEY=gsk_...
+```
+
+Untuk provider yang belum terdaftar, pakai `custom` lalu set `OPENAI_BASE_URL`, `SALESINSIGHT_MODEL`, dan `OPENAI_API_KEY` sendiri.
+
+`temperature=0` memastikan SQL deterministik. Harga token hanya untuk estimasi biaya di trace (provider gratis → biaya 0).
 """),
     ("code", """
-MODEL_NAME     = os.getenv("SALESINSIGHT_MODEL", "gpt-4o-mini")
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")           # mis. https://router.unitrade.web.id/v1
-OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
+# --- Registry provider: nama -> (base_url, default_model, env_api_key, harga in/out per 1K USD) ---
+PROVIDERS = {
+    "groq":       ("https://api.groq.com/openai/v1",            "llama-3.3-70b-versatile",              "GROQ_API_KEY",       0.0, 0.0),
+    "cerebras":   ("https://api.cerebras.ai/v1",                "llama-3.3-70b",                        "CEREBRAS_API_KEY",   0.0, 0.0),
+    "gemini":     ("https://generativelanguage.googleapis.com/v1beta/openai/", "gemini-2.0-flash",     "GEMINI_API_KEY",     0.0, 0.0),
+    "openrouter": ("https://openrouter.ai/api/v1",              "meta-llama/llama-3.3-70b-instruct:free","OPENROUTER_API_KEY",0.0, 0.0),
+    "mistral":    ("https://api.mistral.ai/v1",                 "mistral-small-latest",                 "MISTRAL_API_KEY",    0.0, 0.0),
+    "github":     ("https://models.inference.ai.azure.com",     "gpt-4o-mini",                          "GITHUB_TOKEN",       0.0, 0.0),
+    "router":     ("https://router.unitrade.web.id/v1",         "hermes-claude",                        "ROUTER_API_KEY",     0.0, 0.0),
+    "openai":     ("https://api.openai.com/v1",                 "gpt-4o-mini",                          "OPENAI_API_KEY",     0.00015, 0.00060),
+    # --- CUSTOM PROVIDER: edit baris ini atau override via env ---
+    "custom":     (os.getenv("OPENAI_BASE_URL", ""),            os.getenv("SALESINSIGHT_MODEL", "gpt-4o-mini"), "OPENAI_API_KEY", 0.0, 0.0),
+}
 
-# Harga per 1K token (USD). Sesuaikan dengan provider.
-PRICE_INPUT_PER_1K  = float(os.getenv("SALESINSIGHT_PRICE_IN",  "0.00015"))
-PRICE_OUTPUT_PER_1K = float(os.getenv("SALESINSIGHT_PRICE_OUT", "0.00060"))
+PROVIDER = os.getenv("SALESINSIGHT_PROVIDER", "custom").lower()
+if PROVIDER not in PROVIDERS:
+    raise ValueError(f"Provider '{PROVIDER}' tak dikenal. Pilihan: {list(PROVIDERS)}")
+
+_base, _model, _keyenv, _pin, _pout = PROVIDERS[PROVIDER]
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL") or _base or None
+MODEL_NAME      = os.getenv("SALESINSIGHT_MODEL", _model)
+OPENAI_API_KEY  = os.getenv(_keyenv) or os.getenv("OPENAI_API_KEY")
+PRICE_INPUT_PER_1K  = float(os.getenv("SALESINSIGHT_PRICE_IN",  str(_pin)))
+PRICE_OUTPUT_PER_1K = float(os.getenv("SALESINSIGHT_PRICE_OUT", str(_pout)))
 
 LLM_ENABLED = bool(OPENAI_API_KEY)
 
@@ -134,6 +175,8 @@ def _make_client():
     return OpenAI(**kwargs)
 
 client = _make_client()
-print("LLM:", "AKTIF (model=%s)" % MODEL_NAME if LLM_ENABLED else "NONAKTIF — set OPENAI_API_KEY untuk mengaktifkan generasi SQL")
+print(f"Provider: {PROVIDER} | model: {MODEL_NAME} | base_url: {OPENAI_BASE_URL or 'default'}")
+print("LLM:", "AKTIF" if LLM_ENABLED else f"NONAKTIF — set {_keyenv} untuk mengaktifkan")
 """, "det"),
 ]
+

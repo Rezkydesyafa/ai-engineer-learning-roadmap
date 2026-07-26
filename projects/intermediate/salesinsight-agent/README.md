@@ -39,12 +39,28 @@ This project applies and reinforces:
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt          # numpy<2 untuk CPU tanpa baseline X86_V2
-# (opsional) aktifkan LLM untuk generasi SQL, demo, dan evaluasi:
-export OPENAI_API_KEY=...                 # endpoint OpenAI-compatible apa pun
-export OPENAI_BASE_URL=https://.../v1     # opsional
-export SALESINSIGHT_MODEL=gpt-4o-mini     # opsional
+# (opsional) aktifkan LLM — pilih salah satu provider gratis di bawah:
+export SALESINSIGHT_PROVIDER=groq        # groq|cerebras|gemini|openrouter|mistral|github|router|custom
+export GROQ_API_KEY=gsk_...              # sesuaikan env dengan provider
 jupyter lab sales_insight_agent.ipynb     # lalu Run All
 ```
+
+### Provider LLM gratis (OpenAI-compatible)
+
+Ganti provider = ganti satu env var. Semua mendukung `response_format=json_object`.
+
+| `SALESINSIGHT_PROVIDER` | Model default | Env API key | Catatan |
+|---|---|---|---|
+| `groq` ⭐ | llama-3.3-70b-versatile | `GROQ_API_KEY` | Tercepat, free tier generous |
+| `cerebras` ⭐ | llama-3.3-70b | `CEREBRAS_API_KEY` | Super cepat, free tier |
+| `gemini` | gemini-2.0-flash | `GEMINI_API_KEY` | Free tier besar |
+| `openrouter` | llama-3.3-70b-instruct:free | `OPENROUTER_API_KEY` | Model `:free`, rate-limit ketat |
+| `mistral` | mistral-small-latest | `MISTRAL_API_KEY` | Free tier |
+| `github` | gpt-4o-mini | `GITHUB_TOKEN` | Gratis via GitHub token |
+| `router` | hermes-claude | `ROUTER_API_KEY` | Router pribadi |
+| `custom` | (atur sendiri) | `OPENAI_API_KEY` | Set `OPENAI_BASE_URL` + `SALESINSIGHT_MODEL` |
+
+**Custom provider:** `export SALESINSIGHT_PROVIDER=custom OPENAI_BASE_URL=https://.../v1 SALESINSIGHT_MODEL=nama-model OPENAI_API_KEY=...`
 
 Tanpa `OPENAI_API_KEY`, seluruh bagian **deterministik** (dataset, DuckDB, guardrail, security test, verifikasi ground truth) tetap berjalan penuh tanpa biaya; hanya generasi SQL, demo, dan evaluasi yang otomatis di-skip.
 
