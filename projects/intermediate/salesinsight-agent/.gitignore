@@ -1,0 +1,9 @@
+# venv & artefak lokal
+.venv/
+sales.db
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# jangan commit lock lingkungan-spesifik
+requirements-lock.txt

@@ -32,7 +32,54 @@ This project applies and reinforces:
 
 ## Status
 
-`Planning` — PRD complete, implementation not started.
+`Notebook complete` — `sales_insight_agent.ipynb` dibuat, 60 sel (31 markdown, 29 code), lolos uji bagian deterministik.
+
+## Cara menjalankan
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt          # numpy<2 untuk CPU tanpa baseline X86_V2
+# (opsional) aktifkan LLM untuk generasi SQL, demo, dan evaluasi:
+export OPENAI_API_KEY=...                 # endpoint OpenAI-compatible apa pun
+export OPENAI_BASE_URL=https://.../v1     # opsional
+export SALESINSIGHT_MODEL=gpt-4o-mini     # opsional
+jupyter lab sales_insight_agent.ipynb     # lalu Run All
+```
+
+Tanpa `OPENAI_API_KEY`, seluruh bagian **deterministik** (dataset, DuckDB, guardrail, security test, verifikasi ground truth) tetap berjalan penuh tanpa biaya; hanya generasi SQL, demo, dan evaluasi yang otomatis di-skip.
+
+### Verifikasi yang sudah dijalankan
+
+Bagian non-LLM diuji end-to-end (`python build_notebook.py --test`) — 24 sel deterministik berjalan tanpa exception:
+
+- Dataset bercerita: 20.000 order, ~59.8K item, tren YoY tertanam (revenue 2025 > 2024).
+- Koneksi read-only menolak operasi tulis.
+- Guardrail: 10/10 unit test lulus + forced LIMIT 1000.
+- Security testing: **10/10 blocked (100%)**.
+- 50 ground-truth SQL semua tereksekusi valid.
+
+## Highlight engineering
+
+- **Aturan bisnis di lapisan data** (view `v_completed_sales`), bukan di prompt.
+- **Validasi SQL berbasis AST (SQLGlot)**, bukan regex — tahan komentar/string literal.
+- **Timeout via watchdog thread** (DuckDB tak punya statement timeout bawaan).
+- **Faithfulness check** — verifikasi angka ringkasan benar ada di hasil query.
+- **Execution accuracy** dengan canonicalize (sort + round + multiset) agar adil.
+- **Deterministik**: `temperature=0` untuk SQL, `seed` tetap untuk dataset.
+
+## Reproduksi notebook
+
+Notebook di-generate dari sumber modular agar rapi & teruji:
+
+```bash
+python build_notebook.py          # rakit ulang .ipynb dari cells_*.py
+python build_notebook.py --test   # exec sel deterministik untuk verifikasi
+```
+
+## Documents
+
+- [PRD.md](PRD.md) — full product requirements document (v1.0)
+- [sales_insight_agent.ipynb](sales_insight_agent.ipynb) — the end-to-end notebook (60 cells)
 
 ## Tech stack
 
