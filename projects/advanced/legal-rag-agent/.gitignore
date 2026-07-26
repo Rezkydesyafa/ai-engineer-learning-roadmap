@@ -1,0 +1,11 @@
+# raw PDF hukum — diunduh via download_corpus.py, jangan commit (besar)
+data/raw/
+*.pdf
+
+# artefak proses
+data/processed/
+*.duckdb
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

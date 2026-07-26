@@ -68,14 +68,18 @@ RAG statis (retrieve→stuff→answer) gagal di ketiga titik ini. Perlu **agent*
 
 ## 5. Ruang Lingkup Dokumen (Korpus v1)
 
-| Dokumen | Peran | Sumber |
-|---|---|---|
-| UU 13/2003 Ketenagakerjaan | UU dasar | peraturan.bpk.go.id |
-| UU 11/2020 Cipta Kerja | Pengubah | peraturan.bpk.go.id |
-| UU 6/2023 (Perppu Cipta Kerja jadi UU) | Pengubah terkini | peraturan.bpk.go.id |
-| PP 35/2021 (PKWT, alih daya, waktu kerja, PHK) | Turunan operasional | peraturan.bpk.go.id |
+Scope dikunci ke **hukum ketenagakerjaan Indonesia**. Dokumen sudah diunduh dari sumber resmi (lihat `SOURCES.md` + `download_corpus.py`).
 
-Semua dokumen adalah **produk hukum negara → domain publik**, aman untuk portofolio & unggah ke Hugging Face.
+| Dokumen | Peran | Status | Hal | Sumber resmi (JDIH BPK) |
+|---|---|---|---|---|
+| UU 13/2003 Ketenagakerjaan | UU dasar | text-based ✓ | 128 | [Details/43013](https://peraturan.bpk.go.id/details/43013) |
+| UU 11/2020 Cipta Kerja | Pengubah (historis) | — | — | [Details/149750](https://peraturan.bpk.go.id/Details/149750/uu-no-11-tahun-2020) |
+| UU 6/2023 (Perppu Ciptaker jadi UU) | Pengubah terkini/berlaku | text-based ✓ | 1126 | [Details/246523](https://peraturan.bpk.go.id/Details/246523/uu-no-6-tahun-2023) |
+| PP 35/2021 (PKWT, alih daya, PHK) | Turunan operasional | text-based ✓ | 56 | [Details/161904](https://peraturan.bpk.go.id/Details/161904/pp-no-35-tahun-2021) |
+
+- Ketiga PDF inti **text-based** (bukan scan) → tidak butuh OCR, cukup `pymupdf`.
+- **UU 6/2023 mencakup semua sektor** (1126 hal). Sesuai scope, ingestion **memfilter hanya klaster ketenagakerjaan** (bagian yang mengubah UU 13/2003).
+- Semua dokumen **produk hukum negara → domain publik** (UU Hak Cipta 28/2014 Pasal 42), aman untuk portofolio & Hugging Face.
 
 ---
 
