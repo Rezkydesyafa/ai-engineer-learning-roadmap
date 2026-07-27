@@ -16,6 +16,11 @@ from .core import (
     PlannedRetriever,
     DenseHybridRetriever,
     reciprocal_rank_fusion,
+    SynthesizedAnswer,
+    verify_synthesized_answer,
+    EvaluationCase,
+    EvaluationResult,
+    compute_evaluation_metrics,
 )
 
 __all__ = [
@@ -35,4 +40,9 @@ __all__ = [
     "PlannedRetriever",
     "DenseHybridRetriever",
     "reciprocal_rank_fusion",
+    "SynthesizedAnswer",
+    "verify_synthesized_answer",
+    "EvaluationCase",
+    "EvaluationResult",
+    "compute_evaluation_metrics",
 ]

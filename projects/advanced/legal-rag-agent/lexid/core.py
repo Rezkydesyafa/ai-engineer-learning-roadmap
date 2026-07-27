@@ -336,6 +336,73 @@ class CitationVerifier:
         return VerificationResult(citation, valid=True, reason="Pasal dan kutipan terverifikasi akurat")
 
 
+@dataclass
+class SynthesizedAnswer:
+    answer: str
+    citations: List[Citation]
+    assumptions: List[str]
+    confidence: str
+    refused: bool = False
+    verification_results: List[VerificationResult] = field(default_factory=list)
+
+
+def verify_synthesized_answer(answer: SynthesizedAnswer, verifier: CitationVerifier) -> SynthesizedAnswer:
+    results = [verifier.verify(citation) for citation in answer.citations]
+    valid_citations = [result.citation for result in results if result.valid]
+    if not valid_citations:
+        return SynthesizedAnswer(
+            answer="Tidak ditemukan dasar hukum yang cukup jelas dan terverifikasi untuk menjawab pertanyaan ini. Konsultasikan dengan ahli hukum atau instansi ketenagakerjaan resmi.",
+            citations=[], assumptions=answer.assumptions, confidence="rendah",
+            refused=True, verification_results=results,
+        )
+    return SynthesizedAnswer(
+        answer=answer.answer, citations=valid_citations, assumptions=answer.assumptions,
+        confidence=answer.confidence, refused=False, verification_results=results,
+    )
+
+
+@dataclass
+class EvaluationCase:
+    question: str
+    expected_document: Optional[str]
+    expected_article: Optional[str]
+    should_refuse: bool
+    expected_current_document: Optional[str] = None
+    expected_current_article: Optional[str] = None
+
+
+@dataclass
+class EvaluationResult:
+    question: str
+    retrieval_hit: bool
+    citation_valid: bool
+    cited_document: Optional[str]
+    cited_article: Optional[str]
+    refused: bool
+    faithful: bool
+
+
+def compute_evaluation_metrics(cases: List[EvaluationCase], results: List[EvaluationResult]) -> Dict[str, float]:
+    if len(cases) != len(results):
+        raise ValueError("cases dan results harus punya panjang yang sama")
+    answerable = [(case, result) for case, result in zip(cases, results) if not case.should_refuse]
+    refusals = [(case, result) for case, result in zip(cases, results) if case.should_refuse]
+
+    def ratio(items, predicate):
+        return sum(bool(predicate(*item)) for item in items) / len(items) if items else 1.0
+
+    return {
+        "retrieval_hit_at_5": ratio(answerable, lambda _c, r: r.retrieval_hit),
+        "citation_accuracy": ratio(answerable, lambda _c, r: r.citation_valid),
+        "version_accuracy": ratio(answerable, lambda c, r: (
+            True if not c.expected_current_document else
+            (r.cited_document == c.expected_current_document and r.cited_article == c.expected_current_article)
+        )),
+        "refusal_accuracy": ratio(refusals, lambda _c, r: r.refused),
+        "faithfulness_proxy": ratio(answerable, lambda _c, r: r.faithful),
+    }
+
+
 def is_in_scope(query: str) -> bool:
     keywords = [
         "pesangon", "phk", "pekerja", "karyawan", "upah", "gaji",

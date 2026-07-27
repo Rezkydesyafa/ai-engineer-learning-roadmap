@@ -56,13 +56,19 @@ Semua produk hukum negara → domain publik, aman untuk portofolio.
 
 ## Status
 
-`M2 complete` — `legal_rag_agent.ipynb` (24 sel: 12 markdown, 12 code) sudah diuji Run-All secara deterministik:
+`M3 complete` — `legal_rag_agent.ipynb` (29 sel: 14 markdown, 15 code) berhasil diuji Run-All dan lolos validasi nbformat:
 - 379 chunk pasal dari 3 PDF resmi; version graph mencakup 32 pasal kunci ketenagakerjaan.
 - FastEmbed/ONNX multilingual dense embedding + weighted RRF, tanpa PyTorch.
-- Bounded Query Planner: maksimal 3 retrieval calls, article hints auditable, Pydantic structured output.
-- Provider planner: Groq, Cerebras, Gemini, OpenRouter, router pribadi, dan custom OpenAI-compatible; fallback heuristic aman jika API mati.
-- Citation verifier/refusal security 3/3; **16 unit tests lulus**.
-- Ablation pada eval set sama: BM25 **50%** → Dense/RRF **45%** → Planned Agentic RAG **55%**. Kegagalan dense-only dan improvement planner terdokumentasi jujur.
+- M2 Bounded Query Planner & LLM Registry (Groq, Cerebras, Gemini, OpenRouter, router pribadi, custom).
+- M3 Synthesizer Pydantic + Verifier Gate: menyaring sitasi fiktif dan melakukan refusal aman bila seluruh sitasi gagal.
+- **Evaluation Dataset M3 (84 kasus tervalidasi)**: 60 answerable, 12 version-sensitive, 12 out-of-scope/refusal.
+- **Hasil Evaluasi M3 (Deterministic Heuristic Baseline)**:
+  - Retrieval Hit@5: **50.0%**
+  - Citation Accuracy: **81.9%** (sitasi riil & teks cocok)
+  - Version Accuracy: **100.0%** (selalu mengarah ke UU 6/2023 Cipta Kerja untuk pasal usang)
+  - Refusal Accuracy: **100.0%** (12/12 out-of-scope diblokir sempurna)
+  - Faithfulness Proxy: **81.9%**
+  - **20 unit tests lulus clean.**
 
 ## Cara menjalankan PoC
 

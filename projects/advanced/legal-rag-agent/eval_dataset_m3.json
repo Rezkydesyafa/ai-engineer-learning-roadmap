@@ -1,0 +1,614 @@
+[
+  {
+    "question": "apa definisi tenaga kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "1",
+    "should_refuse": false,
+    "category": "definisi tenaga kerja"
+  },
+  {
+    "question": "siapa yang dimaksud tenaga kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "1",
+    "should_refuse": false,
+    "category": "definisi tenaga kerja"
+  },
+  {
+    "question": "jelaskan pengertian tenaga kerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "1",
+    "should_refuse": false,
+    "category": "definisi tenaga kerja"
+  },
+  {
+    "question": "apa dasar pembangunan ketenagakerjaan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "2",
+    "should_refuse": false,
+    "category": "dasar pembangunan ketenagakerjaan"
+  },
+  {
+    "question": "pembangunan ketenagakerjaan berlandaskan apa?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "2",
+    "should_refuse": false,
+    "category": "dasar pembangunan ketenagakerjaan"
+  },
+  {
+    "question": "apa landasan ketenagakerjaan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "2",
+    "should_refuse": false,
+    "category": "dasar pembangunan ketenagakerjaan"
+  },
+  {
+    "question": "apakah pekerja berhak tanpa diskriminasi?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "6",
+    "should_refuse": false,
+    "category": "perlakuan tanpa diskriminasi"
+  },
+  {
+    "question": "bagaimana hak perlakuan yang sama bagi pekerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "6",
+    "should_refuse": false,
+    "category": "perlakuan tanpa diskriminasi"
+  },
+  {
+    "question": "bolehkah pengusaha mendiskriminasi pekerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "6",
+    "should_refuse": false,
+    "category": "perlakuan tanpa diskriminasi"
+  },
+  {
+    "question": "bagaimana aturan pelatihan kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "9",
+    "should_refuse": false,
+    "category": "pelatihan kerja"
+  },
+  {
+    "question": "apa hak pekerja untuk pelatihan kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "9",
+    "should_refuse": false,
+    "category": "pelatihan kerja"
+  },
+  {
+    "question": "jelaskan ketentuan pelatihan tenaga kerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "9",
+    "should_refuse": false,
+    "category": "pelatihan kerja"
+  },
+  {
+    "question": "apa yang wajib ada dalam perjanjian kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "54",
+    "should_refuse": false,
+    "category": "isi perjanjian kerja"
+  },
+  {
+    "question": "apa isi minimal kontrak kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "54",
+    "should_refuse": false,
+    "category": "isi perjanjian kerja"
+  },
+  {
+    "question": "jelaskan syarat isi perjanjian kerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "54",
+    "should_refuse": false,
+    "category": "isi perjanjian kerja"
+  },
+  {
+    "question": "kapan perjanjian kerja berakhir?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "61",
+    "should_refuse": false,
+    "category": "berakhir perjanjian kerja"
+  },
+  {
+    "question": "apa penyebab kontrak kerja berakhir?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "61",
+    "should_refuse": false,
+    "category": "berakhir perjanjian kerja"
+  },
+  {
+    "question": "bagaimana ketentuan berakhirnya perjanjian kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "61",
+    "should_refuse": false,
+    "category": "berakhir perjanjian kerja"
+  },
+  {
+    "question": "berapa jam waktu kerja normal?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "77",
+    "should_refuse": false,
+    "category": "waktu kerja"
+  },
+  {
+    "question": "bagaimana aturan jam kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "77",
+    "should_refuse": false,
+    "category": "waktu kerja"
+  },
+  {
+    "question": "jelaskan batas waktu kerja pekerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "77",
+    "should_refuse": false,
+    "category": "waktu kerja"
+  },
+  {
+    "question": "bagaimana aturan lembur?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "78",
+    "should_refuse": false,
+    "category": "lembur"
+  },
+  {
+    "question": "apa syarat kerja lembur?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "78",
+    "should_refuse": false,
+    "category": "lembur"
+  },
+  {
+    "question": "kapan pengusaha boleh meminta lembur?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "78",
+    "should_refuse": false,
+    "category": "lembur"
+  },
+  {
+    "question": "apa hak istirahat mingguan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "79",
+    "should_refuse": false,
+    "category": "istirahat mingguan"
+  },
+  {
+    "question": "berapa lama istirahat pekerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "79",
+    "should_refuse": false,
+    "category": "istirahat mingguan"
+  },
+  {
+    "question": "jelaskan hak waktu istirahat",
+    "expected_document": "UU-13-2003",
+    "expected_article": "79",
+    "should_refuse": false,
+    "category": "istirahat mingguan"
+  },
+  {
+    "question": "bagaimana hak cuti melahirkan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "82",
+    "should_refuse": false,
+    "category": "cuti melahirkan"
+  },
+  {
+    "question": "berapa lama cuti pekerja yang melahirkan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "82",
+    "should_refuse": false,
+    "category": "cuti melahirkan"
+  },
+  {
+    "question": "apa hak pekerja perempuan saat melahirkan?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "82",
+    "should_refuse": false,
+    "category": "cuti melahirkan"
+  },
+  {
+    "question": "bagaimana perlindungan keselamatan kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "86",
+    "should_refuse": false,
+    "category": "keselamatan kerja"
+  },
+  {
+    "question": "apa hak pekerja atas K3?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "86",
+    "should_refuse": false,
+    "category": "keselamatan kerja"
+  },
+  {
+    "question": "jelaskan hak keselamatan dan kesehatan kerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "86",
+    "should_refuse": false,
+    "category": "keselamatan kerja"
+  },
+  {
+    "question": "bagaimana kewajiban pembayaran upah?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "88",
+    "should_refuse": false,
+    "category": "pengupahan"
+  },
+  {
+    "question": "apa hak pekerja terhadap upah?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "88",
+    "should_refuse": false,
+    "category": "pengupahan"
+  },
+  {
+    "question": "jelaskan kebijakan pengupahan pekerja",
+    "expected_document": "UU-13-2003",
+    "expected_article": "88",
+    "should_refuse": false,
+    "category": "pengupahan"
+  },
+  {
+    "question": "bagaimana aturan upah minimum?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "89",
+    "should_refuse": false,
+    "category": "upah minimum"
+  },
+  {
+    "question": "siapa yang menetapkan upah minimum?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "89",
+    "should_refuse": false,
+    "category": "upah minimum"
+  },
+  {
+    "question": "jelaskan ketentuan upah minimum",
+    "expected_document": "UU-13-2003",
+    "expected_article": "89",
+    "should_refuse": false,
+    "category": "upah minimum"
+  },
+  {
+    "question": "bagaimana prosedur pemutusan hubungan kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "151",
+    "should_refuse": false,
+    "category": "prosedur PHK"
+  },
+  {
+    "question": "apa tahapan PHK pekerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "151",
+    "should_refuse": false,
+    "category": "prosedur PHK"
+  },
+  {
+    "question": "bagaimana pengusaha melakukan PHK?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "151",
+    "should_refuse": false,
+    "category": "prosedur PHK"
+  },
+  {
+    "question": "apa komponen uang pesangon?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "156",
+    "should_refuse": false,
+    "category": "pesangon"
+  },
+  {
+    "question": "bagaimana perhitungan hak pesangon?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "156",
+    "should_refuse": false,
+    "category": "pesangon"
+  },
+  {
+    "question": "apa hak pekerja saat PHK terkait pesangon?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "156",
+    "should_refuse": false,
+    "category": "pesangon"
+  },
+  {
+    "question": "bagaimana uang kompensasi PKWT?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "15",
+    "should_refuse": false,
+    "category": "kompensasi PKWT"
+  },
+  {
+    "question": "kapan kompensasi kontrak diberikan?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "15",
+    "should_refuse": false,
+    "category": "kompensasi PKWT"
+  },
+  {
+    "question": "apa hak kompensasi pekerja PKWT?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "15",
+    "should_refuse": false,
+    "category": "kompensasi PKWT"
+  },
+  {
+    "question": "bagaimana aturan alih daya?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "18",
+    "should_refuse": false,
+    "category": "alih daya"
+  },
+  {
+    "question": "apa ketentuan outsourcing?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "18",
+    "should_refuse": false,
+    "category": "alih daya"
+  },
+  {
+    "question": "siapa bertanggung jawab pada pekerja alih daya?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "18",
+    "should_refuse": false,
+    "category": "alih daya"
+  },
+  {
+    "question": "apa kewajiban pengusaha saat PHK?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "40",
+    "should_refuse": false,
+    "category": "PHK dan pesangon PP"
+  },
+  {
+    "question": "berapa komponen hak akibat PHK?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "40",
+    "should_refuse": false,
+    "category": "PHK dan pesangon PP"
+  },
+  {
+    "question": "apa aturan pesangon berdasarkan PP 35?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "40",
+    "should_refuse": false,
+    "category": "PHK dan pesangon PP"
+  },
+  {
+    "question": "bagaimana PHK karena efisiensi?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "43",
+    "should_refuse": false,
+    "category": "PHK efisiensi"
+  },
+  {
+    "question": "apa hak pekerja jika perusahaan melakukan efisiensi?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "43",
+    "should_refuse": false,
+    "category": "PHK efisiensi"
+  },
+  {
+    "question": "bolehkah PHK karena efisiensi perusahaan?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "43",
+    "should_refuse": false,
+    "category": "PHK efisiensi"
+  },
+  {
+    "question": "bagaimana PHK karena pensiun?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "56",
+    "should_refuse": false,
+    "category": "PHK pensiun"
+  },
+  {
+    "question": "apa hak pekerja yang memasuki usia pensiun?",
+    "expected_document": "PP-35-2021",
+    "expected_article": "56",
+    "should_refuse": false,
+    "category": "PHK pensiun"
+  },
+  {
+    "question": "jelaskan PHK akibat usia pensiun",
+    "expected_document": "PP-35-2021",
+    "expected_article": "56",
+    "should_refuse": false,
+    "category": "PHK pensiun"
+  },
+  {
+    "question": "berapa jam kerja yang berlaku setelah Cipta Kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "77",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "77",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana aturan lembur terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "78",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "78",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana waktu istirahat setelah perubahan Cipta Kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "79",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "79",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "apa aturan pengupahan yang berlaku saat ini?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "88",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "88",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "apa aturan upah minimum setelah Cipta Kerja?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "89",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "89",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana prosedur PHK versi terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "151",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "151",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "apa larangan PHK menurut aturan terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "153",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "153",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "apa ketentuan pesangon terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "156",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "156",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana dasar perhitungan pesangon terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "157",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "157",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana aturan outsourcing terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "66",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "66",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana PHK karena pelanggaran terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "161",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "161",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "bagaimana PHK karena perubahan perusahaan terbaru?",
+    "expected_document": "UU-13-2003",
+    "expected_article": "163",
+    "should_refuse": false,
+    "expected_current_document": "UU-6-2023",
+    "expected_current_article": "163",
+    "category": "version-sensitive"
+  },
+  {
+    "question": "berapa tarif pajak pertambahan nilai?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "bagaimana pembagian warisan menurut KUHPerdata?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "apa ancaman pidana korupsi?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "bagaimana prosedur perceraian?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "siapa pemilik sertifikat tanah?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "apa syarat pendirian perseroan terbatas?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "bagaimana izin usaha pertambangan?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "apa hukuman pencemaran nama baik?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "bagaimana hak asuh anak setelah cerai?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "berapa pajak penghasilan badan?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "bagaimana sengketa merek dagang?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  },
+  {
+    "question": "apa aturan kepailitan perusahaan?",
+    "expected_document": null,
+    "expected_article": null,
+    "should_refuse": true,
+    "category": "out-of-scope"
+  }
+]

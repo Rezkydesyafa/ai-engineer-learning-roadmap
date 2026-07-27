@@ -171,5 +171,60 @@ def test_planned_retriever_bounds_subqueries_to_three():
     assert base.calls == 3
 
 
+def test_synthesis_verifier_removes_fake_citation_and_keeps_valid_one():
+    from lexid.core import Citation, CitationVerifier, ArticleChunk, SynthesizedAnswer, verify_synthesized_answer
+    chunks = [ArticleChunk("UU-13-2003", "156", "Pengusaha wajib membayar uang pesangon kepada pekerja.")]
+    answer = SynthesizedAnswer(
+        answer="Pekerja berhak atas pesangon sesuai ketentuan.",
+        citations=[
+            Citation("UU-13-2003", "156", "wajib membayar uang pesangon"),
+            Citation("UU-13-2003", "999", "pasal palsu"),
+        ],
+        assumptions=[],
+        confidence="tinggi",
+    )
+    verified = verify_synthesized_answer(answer, CitationVerifier(chunks))
+    assert not verified.refused
+    assert len(verified.citations) == 1
+    assert verified.citations[0].article == "156"
+
+
+def test_synthesis_verifier_refuses_when_all_citations_are_fake():
+    from lexid.core import Citation, CitationVerifier, ArticleChunk, SynthesizedAnswer, verify_synthesized_answer
+    answer = SynthesizedAnswer("Klaim tanpa bukti", [Citation("UU-X", "99", "fiktif")], [], "tinggi")
+    verified = verify_synthesized_answer(answer, CitationVerifier([ArticleChunk("UU-X", "1", "teks asli")]))
+    assert verified.refused
+    assert "Tidak ditemukan dasar hukum" in verified.answer
+
+
+def test_evaluation_metrics_compute_citation_version_and_refusal_accuracy():
+    from lexid.core import EvaluationCase, EvaluationResult, compute_evaluation_metrics
+    cases = [
+        EvaluationCase("q1", "UU-13-2003", "156", False, expected_current_document="UU-6-2023", expected_current_article="156"),
+        EvaluationCase("q2", "PP-35-2021", "40", False),
+        EvaluationCase("q3", None, None, True),
+    ]
+    results = [
+        EvaluationResult("q1", True, True, "UU-6-2023", "156", False, True),
+        EvaluationResult("q2", True, True, "PP-35-2021", "40", False, True),
+        EvaluationResult("q3", False, False, None, None, True, True),
+    ]
+    metrics = compute_evaluation_metrics(cases, results)
+    assert metrics["retrieval_hit_at_5"] == 1.0
+    assert metrics["citation_accuracy"] == 1.0
+    assert metrics["version_accuracy"] == 1.0
+    assert metrics["refusal_accuracy"] == 1.0
+    assert metrics["faithfulness_proxy"] == 1.0
+
+
+def test_evaluation_version_accuracy_penalizes_old_version_citation():
+    from lexid.core import EvaluationCase, EvaluationResult, compute_evaluation_metrics
+    cases = [EvaluationCase("q", "UU-13-2003", "156", False, expected_current_document="UU-6-2023", expected_current_article="156")]
+    results = [EvaluationResult("q", True, True, "UU-13-2003", "156", False, True)]
+    metrics = compute_evaluation_metrics(cases, results)
+    assert metrics["citation_accuracy"] == 1.0
+    assert metrics["version_accuracy"] == 0.0
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
