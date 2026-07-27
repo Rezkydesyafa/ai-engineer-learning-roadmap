@@ -56,11 +56,12 @@ Semua produk hukum negara → domain publik, aman untuk portofolio.
 
 ## Status
 
-`M0 complete` — `legal_rag_agent.ipynb` berhasil dibuat dan diuji secara deterministik tanpa mock:
+`M1 complete` — `legal_rag_agent.ipynb` berhasil dibuat dan diuji secara deterministik tanpa mock:
 - 379 chunk pasal terurai dari 3 PDF resmi (UU 13/2003, UU 6/2023, PP 35/2021).
-- Version graph mendeteksi status pasal yang diubah (mis. UU 13/2003 Psl 156 -> UU 6/2023 Psl 81).
-- Citation verifier & refusal security 3/3 lulus.
-- Evaluation baseline Hit@5 M0 terekam jujur (50.0%) sebagai benchmark untuk M1 (dense + reranker).
+- Version graph diperluas ke 32 pasal kunci ketenagakerjaan (mis. UU 13/2003 Psl 156 -> UU 6/2023 Psl 156).
+- M1 dense semantic retrieval: FastEmbed/ONNX `paraphrase-multilingual-MiniLM-L12-v2` (384 dimensi, tanpa PyTorch) + weighted RRF.
+- Citation verifier & refusal security 3/3 lulus; 12 unit tests lulus.
+- Temuan eval: dense+RRF off-the-shelf menghasilkan Hit@5 **45.0%**, turun dari BM25 baseline 50.0%. Kegagalan ini didokumentasikan apa adanya dan memvalidasi kebutuhan query planner + legal reranker di M2.
 
 ## Cara menjalankan PoC
 

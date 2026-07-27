@@ -110,6 +110,7 @@ class VersionGraph:
 class SearchHit:
     chunk: ArticleChunk
     score: float
+    dense_score: float = 0.0
 
 
 class HybridRetriever:
@@ -136,6 +137,99 @@ class HybridRetriever:
 
         scored.sort(key=lambda item: item[1], reverse=True)
         return [SearchHit(chunk=chunk, score=score) for chunk, score in scored[:top_k]]
+
+
+def reciprocal_rank_fusion(bm25_ranked: List[str], dense_ranked: List[str], k: int = 60) -> Dict[str, float]:
+    scores = {}
+    for rank, doc_id in enumerate(bm25_ranked, 1):
+        scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (k + rank)
+    for rank, doc_id in enumerate(dense_ranked, 1):
+        scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (k + rank)
+    
+    # Supaya bisa memanggil item pertama yang rankingnya tertinggi dengan list/index
+    class RankedDict(dict):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self._sorted = sorted(self.items(), key=lambda x: x[1], reverse=True)
+            self._keys = [x[0] for x in self._sorted]
+            
+        def __getitem__(self, key):
+            if isinstance(key, int):
+                return self._keys[key]
+            return super().__getitem__(key)
+            
+    return RankedDict(scores)
+
+
+class DenseHybridRetriever(HybridRetriever):
+    def __init__(self, chunks: List[ArticleChunk], embedder=None):
+        super().__init__(chunks)
+        self.embedder = embedder
+        self._doc_ids = [f"{c.document_id}:{c.article}" for c in chunks]
+        self._chunk_map = {doc_id: c for doc_id, c in zip(self._doc_ids, chunks)}
+        
+        if self.embedder:
+            texts = [c.text for c in chunks]
+            vectors = list(self.embedder.embed(texts))
+            # Normalisasi vektor supaya np.dot = cosine similarity
+            import numpy as np
+            self._vectors = np.array(vectors)
+            norms = np.linalg.norm(self._vectors, axis=1, keepdims=True)
+            self._vectors = np.divide(self._vectors, norms, out=np.zeros_like(self._vectors), where=norms!=0)
+        else:
+            self._vectors = None
+
+    def search(self, query: str, top_k: int = 5) -> List[SearchHit]:
+        if not query.strip() or not self.chunks:
+            return []
+            
+        # 1. BM25 Search
+        bm25_hits = super().search(query, top_k=len(self.chunks))
+        bm25_ranked = [f"{h.chunk.document_id}:{h.chunk.article}" for h in bm25_hits]
+        
+        dense_hits = []
+        dense_ranked = []
+        
+        # 2. Dense Semantic Search
+        if self.embedder and self._vectors is not None:
+            import numpy as np
+            q_vec = list(self.embedder.embed([query]))[0]
+            q_vec = np.array(q_vec)
+            q_norm = np.linalg.norm(q_vec)
+            if q_norm > 0:
+                q_vec = q_vec / q_norm
+            
+            cos_scores = np.dot(self._vectors, q_vec)
+            scored_dense = sorted(zip(self._doc_ids, cos_scores), key=lambda x: x[1], reverse=True)
+            dense_ranked = [doc_id for doc_id, score in scored_dense if score > 0]
+            dense_hits = {doc_id: float(score) for doc_id, score in scored_dense}
+
+        # 3. Hybrid RRF Fusion
+        if not dense_ranked:
+            # Fallback jika model dense mati / tidak tersedia
+            hits = []
+            for hit in bm25_hits[:top_k]:
+                # Injeksi dense_score=0.0 agar interface konsisten
+                hit.dense_score = 0.0
+                hits.append(hit)
+            return hits
+            
+        # Legal query punya istilah / nomor pasal presisi, jadi BM25 diberi 2x bobot.
+        # Dense dipakai untuk memperluas recall semantic, bukan mengalahkan sinyal lexical.
+        fused = reciprocal_rank_fusion(bm25_ranked + bm25_ranked, dense_ranked, k=60)
+        
+        results = []
+        for i in range(min(top_k, len(fused))):
+            doc_id = fused[i]
+            rrf_score = fused[doc_id]
+            dense_score = dense_hits.get(doc_id, 0.0)
+            
+            chunk = self._chunk_map[doc_id]
+            hit = SearchHit(chunk=chunk, score=rrf_score)
+            hit.dense_score = dense_score
+            results.append(hit)
+            
+        return results
 
 
 class CitationVerifier:

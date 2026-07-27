@@ -80,5 +80,48 @@ def test_parse_articles_keeps_longest_duplicate_from_pdf_headers():
     assert "wajib membayar uang pesangon" in pasal_156[0].text
 
 
+def test_rrf_fusion_rewards_documents_ranked_by_both_retrievers():
+    from lexid.core import reciprocal_rank_fusion
+    fused = reciprocal_rank_fusion(
+        bm25_ranked=["UU-13-2003:156", "PP-35-2021:40", "UU-13-2003:1"],
+        dense_ranked=["PP-35-2021:40", "UU-13-2003:156", "UU-13-2003:1"],
+        k=60,
+    )
+    # Dua dokumen pertama sama-sama muncul di kedua ranker dan mengalahkan dokumen ketiga.
+    assert fused[0] in {"UU-13-2003:156", "PP-35-2021:40"}
+    assert fused["UU-13-2003:156"] > fused["UU-13-2003:1"]
+
+
+def test_dense_hybrid_retriever_uses_semantic_signal_when_bm25_has_no_term_overlap():
+    from lexid.core import ArticleChunk, DenseHybridRetriever
+
+    class FakeEmbedder:
+        def embed(self, texts):
+            mapping = {
+                "pengakhiran kontrak kerja oleh perusahaan": [1.0, 0.0],
+                "ketentuan mengenai pemutusan hubungan kerja dan hak pekerja": [1.0, 0.0],
+                "ketentuan mengenai waktu istirahat mingguan": [0.0, 1.0],
+            }
+            return [mapping[text] for text in texts]
+
+    chunks = [
+        ArticleChunk("UU-13-2003", "151", "ketentuan mengenai pemutusan hubungan kerja dan hak pekerja"),
+        ArticleChunk("UU-13-2003", "79", "ketentuan mengenai waktu istirahat mingguan"),
+    ]
+    retriever = DenseHybridRetriever(chunks, embedder=FakeEmbedder())
+    hits = retriever.search("pengakhiran kontrak kerja oleh perusahaan", top_k=1)
+    assert hits[0].chunk.article == "151"
+    assert hits[0].dense_score > 0.9
+
+
+def test_dense_hybrid_retriever_has_safe_fallback_when_embedder_unavailable():
+    from lexid.core import ArticleChunk, DenseHybridRetriever
+    chunks = [ArticleChunk("PP-35-2021", "40", "pengusaha wajib membayar uang pesangon")]
+    retriever = DenseHybridRetriever(chunks, embedder=None)
+    hits = retriever.search("uang pesangon", top_k=1)
+    assert hits[0].chunk.article == "40"
+    assert hits[0].dense_score == 0.0
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

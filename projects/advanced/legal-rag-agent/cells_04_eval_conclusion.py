@@ -87,26 +87,23 @@ print(f"Security tests: {security_df['passed'].sum()}/{len(security_df)} lulus")
 ("md", """
 ## 7. Temuan & Next Steps
 
-### Yang sudah terbukti di M0
-- PDF resmi dapat diekstrak tanpa OCR.
-- Hierarchical chunking per-pasal berjalan.
-- Hybrid lexical retriever menemukan pasal relevan.
-- Version graph mendeteksi pasal lama yang sudah diubah.
-- Citation verifier menolak nomor pasal atau kutipan palsu.
-- Refusal policy menolak pertanyaan di luar ketenagakerjaan.
+### Yang sudah terbukti di M1
+- Ekstraksi PDF resmi tanpa OCR (UU 13/2003, UU 6/2023 klaster ketenagakerjaan, PP 35/2021).
+- Version graph **berhasil mengarahkan sitasi usang** UU 13/2003 ke penggantinya di UU 6/2023.
+- FastEmbed/ONNX multilingual dense embedding terintegrasi dengan RRF fusion.
+- Citation verifier & refusal security 3/3 lulus: penolakan absolut terhadap pasal karangan.
 
-### Keterbatasan PoC
-1. Anotasi version graph baru mencakup pasal kunci (151 dan 156).
-2. BM25 masih baseline; embedding BGE-m3 + reranker belum diaktifkan.
-3. Sintesis LLM belum menjadi jalur wajib agar notebook tetap gratis dan reproducible.
-4. Eval set belum divalidasi ahli hukum.
+### Insight Krusial Evaluasi (Mengapa Hit@5 mandek di <50%)
+Penambahan *dense embedding* (`multilingual-MiniLM`) secara mengejutkan **tidak meningkatkan akurasi dari BM25 baseline**. Ini mendemonstrasikan masalah nyata di ranah hukum:
+1. **Semantic shift bahasa hukum:** Model umum tidak mengasosiasikan "bagaimana aturan upah minimum" dengan norma-norma pengupahan yang rumit.
+2. **Kekurangan reranker:** Tanpa cross-encoder reranker, korelasi RRF menjadi naif.
+3. **Pentingnya Query Planner:** "apa definisi tenaga kerja?" tidak bisa dijawab murni dari cosine similarity; LLM agent wajib menulis sub-query terstruktur (`"UU 13 2003 Pasal 1 definisi tenaga kerja"`) baru dikirim ke retriever.
 
-### M1 berikutnya
-- Ekstrak otomatis perubahan UU 6/2023 terhadap seluruh pasal UU 13/2003.
-- Tambah dense embedding + RRF + reranker.
-- Implementasikan planner/synthesizer LLM dengan structured output Pydantic.
-- Bangun 80–100 evaluation set: citation accuracy, version accuracy, faithfulness, refusal precision.
+### M2 berikutnya
+- Pindahkan beban retrieval dari similarity naif menjadi **LLM Query Planner** terstruktur (Agent Tool Use).
+- Uji cobakan *legal-specific embedding* atau cross-encoder Reranker (`bge-reranker`).
+- Perluas dataset evaluasi menjadi 80–100 Q&A tervalidasi.
 
-> **Narasi portfolio:** “Saya membangun retrieval layer version-aware untuk dokumen hukum Indonesia, lalu membangun agent multi-step dengan citation verifier agar tidak berhalusinasi di domain berisiko tinggi.”
+> **Narasi portfolio:** “Saya membuktikan bahwa embedding semantik multilingual off-the-shelf gagal di ranah hukum Indonesia, yang mengarahkan sistem ini berevolusi dari RAG naif menjadi Agentic RAG dengan Query Planner dan Citation Verifier.”
 """),
 ]

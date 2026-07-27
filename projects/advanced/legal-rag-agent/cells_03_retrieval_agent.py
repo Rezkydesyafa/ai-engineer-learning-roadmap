@@ -10,15 +10,27 @@ Citation verifier memeriksa kutipan LLM terhadap teks asli korpus:
 - Memeriksa overlap teks kutipan (threshold minimum 60% token match).
 """),
 ("code", """
-retriever = HybridRetriever(all_chunks)
+from lexid.core import DenseHybridRetriever
+
+# Menggunakan FastEmbed (ONNX multilingual)
+try:
+    from fastembed import TextEmbedding
+    print("Mengunduh/memuat model dense FastEmbed (multilingual)...")
+    embedder = TextEmbedding(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+except Exception as e:
+    print(f"Dense embedder fallback to None: {e}")
+    embedder = None
+
+retriever = DenseHybridRetriever(all_chunks, embedder=embedder)
 verifier = CitationVerifier(all_chunks)
 
-# Test pencarian dasar
+# Test pencarian M1 (Hybrid RRF + Dense Semantic)
 query = "Pesangon PHK karyawan masa kerja 5 tahun"
 hits = retriever.search(query, top_k=3)
-print(f"Pencarian: '{query}' -> {len(hits)} pasal relevan")
+print(f"Pencarian M1: '{query}' -> {len(hits)} pasal relevan")
 for i, hit in enumerate(hits, 1):
-    print(f" {i}. [{hit.chunk.document_id}] Pasal {hit.chunk.article} (skor: {hit.score:.4f})")
+    dense_sc = getattr(hit, 'dense_score', 0.0)
+    print(f" {i}. [{hit.chunk.document_id}] Pasal {hit.chunk.article} (RRF: {hit.score:.4f} | Dense Cosine: {dense_sc:.4f})")
     print(f"    Teks: {hit.chunk.text[:120]}...")
 """, "det"),
 ("md", """

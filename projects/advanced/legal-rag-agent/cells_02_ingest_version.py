@@ -49,16 +49,25 @@ Di sini kita menganotasi sebagian perubahan tersebut ke dalam graph relasional.
 """),
 ("code", """
 vgraph = VersionGraph()
-# Di UU 6/2023, Pasal 81 angka 47 mengubah Pasal 156 UU 13/2003.
-vgraph.add_amendment(
-    old_doc="UU-13-2003", old_art="156",
-    new_doc="UU-6-2023", new_art="81"
-)
-# Di UU 6/2023, Pasal 81 angka 42 menghapus/mengubah Pasal 151
-vgraph.add_amendment(
-    old_doc="UU-13-2003", old_art="151",
-    new_doc="UU-6-2023", new_art="81"
-)
+
+# Pemetaan pasal kunci UU 13/2003 ke teks pengganti di UU 6/2023.
+# UU 6/2023 Pasal 81 adalah *ketentuan perubahan*; norma hasilnya tetap diberi
+# nomor pasal (mis. Pasal 156) di klaster ketenagakerjaan. Karena itu resolver
+# harus menunjuk Pasal 156 versi UU 6/2023, BUKAN salah menunjuk "Pasal 81".
+amended_articles = [
+    "66", "77", "78", "79", "88", "88A", "88B", "88C", "88D", "88E",
+    "89", "90", "90A", "90B", "92", "151", "151A", "152", "153", "154",
+    "154A", "155", "156", "157", "157A", "160", "161", "162", "163",
+    "164", "165", "166",
+]
+amendments_uu13 = {article: article for article in amended_articles}  # current article in UU 6/2023
+# Provenance amendment: UU 6/2023 Pasal 81 (divalidasi manual per pasal pada M2).
+
+for old_art, new_art in amendments_uu13.items():
+    vgraph.add_amendment(
+        old_doc="UU-13-2003", old_art=old_art,
+        new_doc="UU-6-2023", new_art=new_art
+    )
 
 stat_156 = vgraph.resolve("UU-13-2003", "156")
 print(f"Status UU-13-2003 Psl 156: {stat_156.status}")
