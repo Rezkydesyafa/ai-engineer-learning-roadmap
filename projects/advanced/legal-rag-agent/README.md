@@ -56,12 +56,13 @@ Semua produk hukum negara → domain publik, aman untuk portofolio.
 
 ## Status
 
-`M1 complete` — `legal_rag_agent.ipynb` berhasil dibuat dan diuji secara deterministik tanpa mock:
-- 379 chunk pasal terurai dari 3 PDF resmi (UU 13/2003, UU 6/2023, PP 35/2021).
-- Version graph diperluas ke 32 pasal kunci ketenagakerjaan (mis. UU 13/2003 Psl 156 -> UU 6/2023 Psl 156).
-- M1 dense semantic retrieval: FastEmbed/ONNX `paraphrase-multilingual-MiniLM-L12-v2` (384 dimensi, tanpa PyTorch) + weighted RRF.
-- Citation verifier & refusal security 3/3 lulus; 12 unit tests lulus.
-- Temuan eval: dense+RRF off-the-shelf menghasilkan Hit@5 **45.0%**, turun dari BM25 baseline 50.0%. Kegagalan ini didokumentasikan apa adanya dan memvalidasi kebutuhan query planner + legal reranker di M2.
+`M2 complete` — `legal_rag_agent.ipynb` (24 sel: 12 markdown, 12 code) sudah diuji Run-All secara deterministik:
+- 379 chunk pasal dari 3 PDF resmi; version graph mencakup 32 pasal kunci ketenagakerjaan.
+- FastEmbed/ONNX multilingual dense embedding + weighted RRF, tanpa PyTorch.
+- Bounded Query Planner: maksimal 3 retrieval calls, article hints auditable, Pydantic structured output.
+- Provider planner: Groq, Cerebras, Gemini, OpenRouter, router pribadi, dan custom OpenAI-compatible; fallback heuristic aman jika API mati.
+- Citation verifier/refusal security 3/3; **16 unit tests lulus**.
+- Ablation pada eval set sama: BM25 **50%** → Dense/RRF **45%** → Planned Agentic RAG **55%**. Kegagalan dense-only dan improvement planner terdokumentasi jujur.
 
 ## Cara menjalankan PoC
 
