@@ -56,26 +56,25 @@ Semua produk hukum negara → domain publik, aman untuk portofolio.
 
 ## Status
 
-`M3 complete` — `legal_rag_agent.ipynb` (29 sel: 14 markdown, 15 code) berhasil diuji Run-All dan lolos validasi nbformat:
-- 379 chunk pasal dari 3 PDF resmi; version graph mencakup 32 pasal kunci ketenagakerjaan.
+`M3 complete` — implementasi telah dikonsolidasikan menjadi **satu notebook self-contained**: `legal_rag_agent.ipynb` (31 sel: 16 markdown, 15 code), tanpa ketergantungan pada source `cells_*.py`, package lokal, builder, atau dataset JSON terpisah.
+- 325 chunk pasal dari 3 PDF resmi pada runtime final; version graph mencakup 32 pasal kunci ketenagakerjaan.
 - FastEmbed/ONNX multilingual dense embedding + weighted RRF, tanpa PyTorch.
 - M2 Bounded Query Planner & LLM Registry (Groq, Cerebras, Gemini, OpenRouter, router pribadi, custom).
 - M3 Synthesizer Pydantic + Verifier Gate: menyaring sitasi fiktif dan melakukan refusal aman bila seluruh sitasi gagal.
 - **Evaluation Dataset M3 (84 kasus tervalidasi)**: 60 answerable, 12 version-sensitive, 12 out-of-scope/refusal.
 - **Hasil Evaluasi M3 (Deterministic Heuristic Baseline)**:
-  - Retrieval Hit@5: **50.0%**
+  - Retrieval Hit@5: **47.2%**
   - Citation Accuracy: **81.9%** (sitasi riil & teks cocok)
   - Version Accuracy: **100.0%** (selalu mengarah ke UU 6/2023 Cipta Kerja untuk pasal usang)
   - Refusal Accuracy: **100.0%** (12/12 out-of-scope diblokir sempurna)
   - Faithfulness Proxy: **81.9%**
-  - **20 unit tests lulus clean.**
+  - Notebook final lolos direct Run-All dan validasi `nbformat`.
 
 ## Cara menjalankan PoC
 
 ```bash
-python3 download_corpus.py
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python3 build_notebook.py --test  # determinis Run-All tanpa LLM
-jupyter lab legal_rag_agent.ipynb  # jalankan interaktif
+python download_corpus.py
+jupyter lab legal_rag_agent.ipynb  # Run All dari atas ke bawah
 ```
