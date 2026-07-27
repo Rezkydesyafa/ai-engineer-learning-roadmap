@@ -16,4 +16,4 @@ _None yet._
 
 | Project | Focus | Status |
 |---|---|---|
-| [LexID Agent](advanced/legal-rag-agent/) | Version-aware legal RAG + multi-step agent + citation verifier (regulasi Indonesia) | Planning |
+| [LexID Agent](advanced/legal-rag-agent/) | Version-aware legal RAG + multi-step agent + citation verifier (ketenagakerjaan Indonesia) | M0 Complete |

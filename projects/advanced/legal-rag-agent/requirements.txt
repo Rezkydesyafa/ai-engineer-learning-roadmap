@@ -1,0 +1,20 @@
+# LexID Agent — M0 PoC
+# VPS CPU lama: NumPy 2.x memakai baseline X86_V2, jadi pin <2.
+numpy<2
+pymupdf>=1.24
+rank-bm25>=0.2.2
+pandas>=2.0
+pydantic>=2.0
+openai>=1.40
+python-dotenv>=1.0
+nbformat>=5.10
+pytest>=8.0
+
+# M1 (optional): dense vector search + reranker
+# sentence-transformers>=3.0
+# qdrant-client>=1.10
+# FlagEmbedding>=1.2
+# langgraph>=0.2
+# ragas>=0.2
+# langfuse>=2.0
+# streamlit>=1.35

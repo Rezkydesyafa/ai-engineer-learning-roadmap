@@ -51,11 +51,23 @@ Semua produk hukum negara → domain publik, aman untuk portofolio.
 ## Documents
 
 - [PRD.md](PRD.md) — full product requirements document (v1.0, 14 bagian)
-
-## Tech stack
-
-pymupdf/marker, multilingual-e5-large/BGE-m3, Qdrant/Chroma, rank_bm25 (RRF), bge-reranker-v2-m3, Pydantic, LangGraph, Groq/Gemini (gratis), RAGAS, Langfuse, Streamlit.
+- [SOURCES.md](SOURCES.md) — daftar korpus resmi JDIH BPK + konteks versi
+- [legal_rag_agent.ipynb](legal_rag_agent.ipynb) — end-to-end runnable PoC notebook (21 sel: 11 md, 10 code)
 
 ## Status
 
-`Planning` — PRD lengkap. Implementasi mulai dari M0 (PoC notebook).
+`M0 complete` — `legal_rag_agent.ipynb` berhasil dibuat dan diuji secara deterministik tanpa mock:
+- 379 chunk pasal terurai dari 3 PDF resmi (UU 13/2003, UU 6/2023, PP 35/2021).
+- Version graph mendeteksi status pasal yang diubah (mis. UU 13/2003 Psl 156 -> UU 6/2023 Psl 81).
+- Citation verifier & refusal security 3/3 lulus.
+- Evaluation baseline Hit@5 M0 terekam jujur (50.0%) sebagai benchmark untuk M1 (dense + reranker).
+
+## Cara menjalankan PoC
+
+```bash
+python3 download_corpus.py
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python3 build_notebook.py --test  # determinis Run-All tanpa LLM
+jupyter lab legal_rag_agent.ipynb  # jalankan interaktif
+```
