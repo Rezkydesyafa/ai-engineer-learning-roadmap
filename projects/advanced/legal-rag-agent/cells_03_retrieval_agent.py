@@ -10,7 +10,7 @@ Citation verifier memeriksa kutipan LLM terhadap teks asli korpus:
 - Memeriksa overlap teks kutipan (threshold minimum 60% token match).
 """),
 ("code", """
-from lexid.core import DenseHybridRetriever
+from lexid.core import DenseHybridRetriever, HeuristicLegalPlanner, PlannedRetriever
 
 # Menggunakan FastEmbed (ONNX multilingual)
 try:
@@ -21,13 +21,15 @@ except Exception as e:
     print(f"Dense embedder fallback to None: {e}")
     embedder = None
 
-retriever = DenseHybridRetriever(all_chunks, embedder=embedder)
+base_retriever = DenseHybridRetriever(all_chunks, embedder=embedder)
+# M2: agent query planner membatasi maksimal 3 tool-call retrieval.
+retriever = PlannedRetriever(base_retriever, HeuristicLegalPlanner(), max_subqueries=3)
 verifier = CitationVerifier(all_chunks)
 
-# Test pencarian M1 (Hybrid RRF + Dense Semantic)
+# Test pencarian M2 (Planner -> Hybrid RRF + Dense Semantic)
 query = "Pesangon PHK karyawan masa kerja 5 tahun"
 hits = retriever.search(query, top_k=3)
-print(f"Pencarian M1: '{query}' -> {len(hits)} pasal relevan")
+print(f"Pencarian M2: '{query}' -> {len(hits)} pasal relevan")
 for i, hit in enumerate(hits, 1):
     dense_sc = getattr(hit, 'dense_score', 0.0)
     print(f" {i}. [{hit.chunk.document_id}] Pasal {hit.chunk.article} (RRF: {hit.score:.4f} | Dense Cosine: {dense_sc:.4f})")

@@ -11,6 +11,11 @@ from .core import (
     CitationVerifier,
     is_in_scope,
     build_verified_answer,
+    QueryPlan,
+    HeuristicLegalPlanner,
+    PlannedRetriever,
+    DenseHybridRetriever,
+    reciprocal_rank_fusion,
 )
 
 __all__ = [
@@ -25,4 +30,9 @@ __all__ = [
     "CitationVerifier",
     "is_in_scope",
     "build_verified_answer",
+    "QueryPlan",
+    "HeuristicLegalPlanner",
+    "PlannedRetriever",
+    "DenseHybridRetriever",
+    "reciprocal_rank_fusion",
 ]

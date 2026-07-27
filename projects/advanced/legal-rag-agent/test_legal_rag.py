@@ -123,5 +123,53 @@ def test_dense_hybrid_retriever_has_safe_fallback_when_embedder_unavailable():
     assert hits[0].dense_score == 0.0
 
 
+def test_heuristic_planner_expands_legal_intent_and_adds_article_hint():
+    from lexid.core import HeuristicLegalPlanner
+    plan = HeuristicLegalPlanner().plan("kapan perjanjian kerja berakhir?")
+    assert plan.in_scope
+    assert "UU-13-2003:61" in plan.article_hints
+    assert any("Pasal 61" in q for q in plan.subqueries)
+    assert len(plan.subqueries) <= 3
+
+
+def test_planned_retriever_promotes_valid_article_hint_without_hiding_normal_search():
+    from lexid.core import ArticleChunk, HeuristicLegalPlanner, HybridRetriever, PlannedRetriever
+    chunks = [
+        ArticleChunk("UU-13-2003", "61", "Perjanjian kerja berakhir apabila pekerja meninggal atau jangka waktunya selesai."),
+        ArticleChunk("UU-13-2003", "127", "Perjanjian kerja bersama mulai berlaku."),
+    ]
+    base = HybridRetriever(chunks)
+    planned = PlannedRetriever(base, HeuristicLegalPlanner())
+    hits = planned.search("kapan perjanjian kerja berakhir?", top_k=2)
+    assert hits[0].chunk.article == "61"
+    assert len(hits) == 2
+
+
+def test_planner_marks_non_labor_query_out_of_scope():
+    from lexid.core import HeuristicLegalPlanner
+    plan = HeuristicLegalPlanner().plan("berapa tarif pajak pertambahan nilai?")
+    assert not plan.in_scope
+    assert plan.subqueries == []
+
+
+def test_planned_retriever_bounds_subqueries_to_three():
+    from lexid.core import ArticleChunk, PlannedRetriever, QueryPlan
+
+    class TooManyPlanner:
+        def plan(self, query):
+            return QueryPlan(True, ["a", "b", "c", "d", "e"], [], "test")
+
+    class CountingRetriever:
+        chunks = [ArticleChunk("UU-X", "1", "a")]
+        def __init__(self): self.calls = 0
+        def search(self, query, top_k=5):
+            self.calls += 1
+            return []
+
+    base = CountingRetriever()
+    PlannedRetriever(base, TooManyPlanner(), max_subqueries=3).search("query", top_k=5)
+    assert base.calls == 3
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

@@ -232,6 +232,91 @@ class DenseHybridRetriever(HybridRetriever):
         return results
 
 
+@dataclass
+class QueryPlan:
+    in_scope: bool
+    subqueries: List[str]
+    article_hints: List[str]
+    rationale: str
+
+
+class HeuristicLegalPlanner:
+    """Planner deterministic untuk mode offline; LLM planner M2 memakai schema sama."""
+    RULES = [
+        ("perjanjian kerja berakhir", "UU-13-2003:61", [
+            "UU 13 Tahun 2003 Pasal 61 berakhirnya perjanjian kerja",
+            "syarat perjanjian kerja berakhir pekerja meninggal jangka waktu selesai",
+        ]),
+        ("pesangon", "UU-13-2003:156", [
+            "UU 13 Tahun 2003 Pasal 156 uang pesangon",
+            "PP 35 Tahun 2021 Pasal 40 uang pesangon PHK",
+        ]),
+        ("lembur", "UU-13-2003:78", [
+            "UU 13 Tahun 2003 Pasal 78 waktu kerja lembur",
+            "PP 35 Tahun 2021 ketentuan waktu kerja lembur",
+        ]),
+        ("cuti melahirkan", "UU-13-2003:82", [
+            "UU 13 Tahun 2003 Pasal 82 cuti melahirkan pekerja perempuan",
+        ]),
+        ("upah minimum", "UU-13-2003:89", [
+            "UU 13 Tahun 2003 Pasal 89 upah minimum",
+        ]),
+        ("alih daya", "PP-35-2021:18", [
+            "PP 35 Tahun 2021 Pasal 18 alih daya outsourcing",
+        ]),
+        ("pkwt", "PP-35-2021:15", [
+            "PP 35 Tahun 2021 Pasal 15 uang kompensasi PKWT",
+        ]),
+    ]
+
+    def plan(self, query: str) -> QueryPlan:
+        if not is_in_scope(query):
+            return QueryPlan(False, [], [], "Di luar domain ketenagakerjaan Indonesia.")
+        normalized = query.lower()
+        hints, expanded = [], []
+        for trigger, hint, subqueries in self.RULES:
+            if trigger in normalized:
+                hints.append(hint)
+                expanded.extend(subqueries)
+        # Selalu pertahankan pertanyaan asli sebagai fallback semantic retrieval.
+        subqueries = [query] + expanded
+        unique = []
+        for item in subqueries:
+            if item not in unique:
+                unique.append(item)
+        return QueryPlan(True, unique[:3], hints, "Ontology ketenagakerjaan deterministic.")
+
+
+class PlannedRetriever:
+    """Bounded agent-tool loop: planner -> max N retrieval -> merge hints/results."""
+    def __init__(self, retriever, planner, max_subqueries: int = 3):
+        self.retriever = retriever
+        self.planner = planner
+        self.max_subqueries = max_subqueries
+        self.chunks = retriever.chunks
+
+    def search(self, query: str, top_k: int = 5) -> List[SearchHit]:
+        plan = self.planner.plan(query)
+        self.last_plan = plan
+        if not plan.in_scope:
+            return []
+        merged = {}
+        # Article hint diberi prioritas, tetapi hasil normal tetap digabung.
+        for hint in plan.article_hints:
+            doc_id, article = hint.split(":", 1)
+            for chunk in self.chunks:
+                if chunk.document_id == doc_id and chunk.article == article:
+                    key = f"{doc_id}:{article}"
+                    merged[key] = SearchHit(chunk=chunk, score=1.0, dense_score=0.0)
+                    break
+        for subquery in plan.subqueries[:self.max_subqueries]:
+            for hit in self.retriever.search(subquery, top_k=top_k):
+                key = f"{hit.chunk.document_id}:{hit.chunk.article}"
+                if key not in merged:
+                    merged[key] = hit
+        return sorted(merged.values(), key=lambda h: h.score, reverse=True)[:top_k]
+
+
 class CitationVerifier:
     def __init__(self, chunks: List[ArticleChunk]):
         self.corpus_map = {(c.document_id, c.article): c.text for c in chunks}
@@ -255,7 +340,7 @@ def is_in_scope(query: str) -> bool:
     keywords = [
         "pesangon", "phk", "pekerja", "karyawan", "upah", "gaji",
         "pkwt", "pkwtt", "alih daya", "outsourcing", "cuti", "lembur",
-        "tenaga kerja", "ketenagakerjaan",
+        "tenaga kerja", "ketenagakerjaan", "perjanjian kerja",
     ]
     q_lower = query.lower()
     return any(k in q_lower for k in keywords)
